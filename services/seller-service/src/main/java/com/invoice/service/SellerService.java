@@ -20,7 +20,15 @@ public class SellerService {
     }
     
     public List<Seller> getAllSellers(Long companyId, String status, String territory) {
-        if (companyId != null) {
+        if (companyId != null && status != null && territory != null) {
+            return sellerRepository.findByCompanyIdAndStatusAndTerritory(companyId, status, territory);
+        } else if (companyId != null && status != null) {
+            return sellerRepository.findByCompanyIdAndStatus(companyId, status);
+        } else if (companyId != null && territory != null) {
+            return sellerRepository.findByCompanyIdAndTerritory(companyId, territory);
+        } else if (status != null && territory != null) {
+            return sellerRepository.findByStatusAndTerritory(status, territory);
+        } else if (companyId != null) {
             return sellerRepository.findByCompanyId(companyId);
         } else if (status != null) {
             return sellerRepository.findByStatus(status);

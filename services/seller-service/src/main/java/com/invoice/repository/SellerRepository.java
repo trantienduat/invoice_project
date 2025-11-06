@@ -13,4 +13,8 @@ public interface SellerRepository extends JpaRepository<Seller, Long> {
     List<Seller> findByCompanyId(Long companyId);
     List<Seller> findByStatus(String status);
     List<Seller> findByTerritory(String territory);
+    List<Seller> findByCompanyIdAndStatus(Long companyId, String status);
+    List<Seller> findByCompanyIdAndTerritory(Long companyId, String territory);
+    List<Seller> findByStatusAndTerritory(String status, String territory);
+    List<Seller> findByCompanyIdAndStatusAndTerritory(Long companyId, String status, String territory);
 }
