@@ -1,9 +1,10 @@
 package com.invoice.controller;
 
+import com.invoice.exception.ResourceAlreadyExistsException;
+import com.invoice.exception.ResourceNotFoundException;
 import com.invoice.model.Issuer;
 import com.invoice.service.IssuerService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,8 +17,11 @@ import java.util.Map;
 @RequestMapping("/api/issuers")
 public class IssuerController {
     
-    @Autowired
-    private IssuerService issuerService;
+    private final IssuerService issuerService;
+    
+    public IssuerController(IssuerService issuerService) {
+        this.issuerService = issuerService;
+    }
     
     @GetMapping
     public ResponseEntity<List<Issuer>> getAllIssuers(
@@ -39,7 +43,7 @@ public class IssuerController {
         try {
             Issuer createdIssuer = issuerService.createIssuer(issuer);
             return ResponseEntity.status(HttpStatus.CREATED).body(createdIssuer);
-        } catch (IllegalArgumentException e) {
+        } catch (ResourceAlreadyExistsException e) {
             Map<String, String> error = new HashMap<>();
             error.put("error", e.getMessage());
             return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
@@ -51,7 +55,11 @@ public class IssuerController {
         try {
             Issuer updatedIssuer = issuerService.updateIssuer(id, issuerDetails);
             return ResponseEntity.ok(updatedIssuer);
-        } catch (IllegalArgumentException e) {
+        } catch (ResourceNotFoundException e) {
+            Map<String, String> error = new HashMap<>();
+            error.put("error", e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+        } catch (ResourceAlreadyExistsException e) {
             Map<String, String> error = new HashMap<>();
             error.put("error", e.getMessage());
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
@@ -65,7 +73,11 @@ public class IssuerController {
             Map<String, String> response = new HashMap<>();
             response.put("message", "Issuer deleted successfully");
             return ResponseEntity.ok(response);
-        } catch (IllegalArgumentException e) {
+        } catch (ResourceNotFoundException e) {
+            Map<String, String> error = new HashMap<>();
+            error.put("error", e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+        } catch (ResourceAlreadyExistsException e) {
             Map<String, String> error = new HashMap<>();
             error.put("error", e.getMessage());
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);

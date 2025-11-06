@@ -1,8 +1,9 @@
 package com.invoice.service;
 
+import com.invoice.exception.ResourceAlreadyExistsException;
+import com.invoice.exception.ResourceNotFoundException;
 import com.invoice.model.Invoice;
 import com.invoice.repository.InvoiceRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,8 +13,11 @@ import java.util.Optional;
 @Service
 public class InvoiceService {
     
-    @Autowired
-    private InvoiceRepository invoiceRepository;
+    private final InvoiceRepository invoiceRepository;
+    
+    public InvoiceService(InvoiceRepository invoiceRepository) {
+        this.invoiceRepository = invoiceRepository;
+    }
     
     public List<Invoice> getAllInvoices(Long companyId, String status) {
         if (companyId != null && status != null) {
@@ -33,7 +37,7 @@ public class InvoiceService {
     @Transactional
     public Invoice createInvoice(Invoice invoice) {
         if (invoiceRepository.findByInvoiceNumber(invoice.getInvoiceNumber()).isPresent()) {
-            throw new IllegalArgumentException("Invoice number already exists");
+            throw new ResourceAlreadyExistsException("Invoice number already exists");
         }
         return invoiceRepository.save(invoice);
     }
@@ -41,7 +45,7 @@ public class InvoiceService {
     @Transactional
     public Invoice updateInvoice(Long id, Invoice invoiceDetails) {
         Invoice invoice = invoiceRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Invoice not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Invoice not found"));
         
         if (invoiceDetails.getAmount() != null) {
             invoice.setAmount(invoiceDetails.getAmount());
@@ -65,7 +69,7 @@ public class InvoiceService {
     @Transactional
     public void deleteInvoice(Long id) {
         if (!invoiceRepository.existsById(id)) {
-            throw new IllegalArgumentException("Invoice not found");
+            throw new ResourceNotFoundException("Invoice not found");
         }
         invoiceRepository.deleteById(id);
     }

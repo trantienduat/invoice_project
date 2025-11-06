@@ -1,9 +1,10 @@
 package com.invoice.controller;
 
+import com.invoice.exception.ResourceAlreadyExistsException;
+import com.invoice.exception.ResourceNotFoundException;
 import com.invoice.model.Seller;
 import com.invoice.service.SellerService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,8 +17,11 @@ import java.util.Map;
 @RequestMapping("/api/sellers")
 public class SellerController {
     
-    @Autowired
-    private SellerService sellerService;
+    private final SellerService sellerService;
+    
+    public SellerController(SellerService sellerService) {
+        this.sellerService = sellerService;
+    }
     
     @GetMapping
     public ResponseEntity<List<Seller>> getAllSellers(
@@ -40,7 +44,7 @@ public class SellerController {
         try {
             Seller createdSeller = sellerService.createSeller(seller);
             return ResponseEntity.status(HttpStatus.CREATED).body(createdSeller);
-        } catch (IllegalArgumentException e) {
+        } catch (ResourceAlreadyExistsException e) {
             Map<String, String> error = new HashMap<>();
             error.put("error", e.getMessage());
             return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
@@ -52,10 +56,14 @@ public class SellerController {
         try {
             Seller updatedSeller = sellerService.updateSeller(id, sellerDetails);
             return ResponseEntity.ok(updatedSeller);
-        } catch (IllegalArgumentException e) {
+        } catch (ResourceNotFoundException e) {
             Map<String, String> error = new HashMap<>();
             error.put("error", e.getMessage());
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+        } catch (ResourceAlreadyExistsException e) {
+            Map<String, String> error = new HashMap<>();
+            error.put("error", e.getMessage());
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
         }
     }
     
@@ -66,7 +74,7 @@ public class SellerController {
             Map<String, String> response = new HashMap<>();
             response.put("message", "Seller deleted successfully");
             return ResponseEntity.ok(response);
-        } catch (IllegalArgumentException e) {
+        } catch (ResourceNotFoundException e) {
             Map<String, String> error = new HashMap<>();
             error.put("error", e.getMessage());
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);

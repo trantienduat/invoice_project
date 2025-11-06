@@ -1,8 +1,9 @@
 package com.invoice.service;
 
 import com.invoice.model.Company;
+import com.invoice.exception.ResourceAlreadyExistsException;
+import com.invoice.exception.ResourceNotFoundException;
 import com.invoice.repository.CompanyRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,8 +13,11 @@ import java.util.Optional;
 @Service
 public class CompanyService {
     
-    @Autowired
-    private CompanyRepository companyRepository;
+    private final CompanyRepository companyRepository;
+    
+    public CompanyService(CompanyRepository companyRepository) {
+        this.companyRepository = companyRepository;
+    }
     
     public List<Company> getAllCompanies(String status, String country) {
         if (status != null) {
@@ -31,7 +35,7 @@ public class CompanyService {
     @Transactional
     public Company createCompany(Company company) {
         if (companyRepository.findByTaxId(company.getTaxId()).isPresent()) {
-            throw new IllegalArgumentException("Company with this tax ID already exists");
+            throw new ResourceAlreadyExistsException("Company with this tax ID already exists");
         }
         return companyRepository.save(company);
     }
@@ -39,7 +43,7 @@ public class CompanyService {
     @Transactional
     public Company updateCompany(Long id, Company companyDetails) {
         Company company = companyRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Company not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Company not found"));
         
         if (companyDetails.getName() != null) {
             company.setName(companyDetails.getName());
@@ -75,7 +79,7 @@ public class CompanyService {
     @Transactional
     public void deleteCompany(Long id) {
         if (!companyRepository.existsById(id)) {
-            throw new IllegalArgumentException("Company not found");
+            throw new ResourceNotFoundException("Company not found");
         }
         companyRepository.deleteById(id);
     }

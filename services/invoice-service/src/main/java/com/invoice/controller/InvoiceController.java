@@ -1,9 +1,10 @@
 package com.invoice.controller;
 
+import com.invoice.exception.ResourceAlreadyExistsException;
+import com.invoice.exception.ResourceNotFoundException;
 import com.invoice.model.Invoice;
 import com.invoice.service.InvoiceService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,8 +17,11 @@ import java.util.Map;
 @RequestMapping("/api/invoices")
 public class InvoiceController {
     
-    @Autowired
-    private InvoiceService invoiceService;
+    private final InvoiceService invoiceService;
+    
+    public InvoiceController(InvoiceService invoiceService) {
+        this.invoiceService = invoiceService;
+    }
     
     @GetMapping
     public ResponseEntity<List<Invoice>> getAllInvoices(
@@ -39,7 +43,7 @@ public class InvoiceController {
         try {
             Invoice createdInvoice = invoiceService.createInvoice(invoice);
             return ResponseEntity.status(HttpStatus.CREATED).body(createdInvoice);
-        } catch (IllegalArgumentException e) {
+        } catch (ResourceAlreadyExistsException e) {
             Map<String, String> error = new HashMap<>();
             error.put("error", e.getMessage());
             return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
@@ -51,7 +55,7 @@ public class InvoiceController {
         try {
             Invoice updatedInvoice = invoiceService.updateInvoice(id, invoiceDetails);
             return ResponseEntity.ok(updatedInvoice);
-        } catch (IllegalArgumentException e) {
+        } catch (ResourceNotFoundException e) {
             Map<String, String> error = new HashMap<>();
             error.put("error", e.getMessage());
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
@@ -65,7 +69,7 @@ public class InvoiceController {
             Map<String, String> response = new HashMap<>();
             response.put("message", "Invoice deleted successfully");
             return ResponseEntity.ok(response);
-        } catch (IllegalArgumentException e) {
+        } catch (ResourceNotFoundException e) {
             Map<String, String> error = new HashMap<>();
             error.put("error", e.getMessage());
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);

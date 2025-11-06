@@ -34,13 +34,13 @@ This project implements a complete microservices-based invoice management system
 
 ## Technical Stack
 
-- **Backend Framework**: Flask 2.3.3
-- **ORM**: SQLAlchemy 3.0.5
-- **Database Migrations**: Flask-Migrate 4.0.5
-- **Database**: SQLite (development) / PostgreSQL/MySQL (production)
+- **Backend Framework**: Spring Boot 3.2.0
+- **ORM/Data Access**: Spring Data JPA / Hibernate
+- **Database**: H2 (development) / PostgreSQL/MySQL (production)
+- **Build Tool**: Gradle 8.5
 - **Containerization**: Docker
 - **Orchestration**: Docker Compose
-- **Language**: Python 3.11+
+- **Language**: Java 21
 
 ## Key Features
 

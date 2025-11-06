@@ -1,8 +1,9 @@
 package com.invoice.service;
 
+import com.invoice.exception.ResourceAlreadyExistsException;
+import com.invoice.exception.ResourceNotFoundException;
 import com.invoice.model.Issuer;
 import com.invoice.repository.IssuerRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,8 +13,11 @@ import java.util.Optional;
 @Service
 public class IssuerService {
     
-    @Autowired
-    private IssuerRepository issuerRepository;
+    private final IssuerRepository issuerRepository;
+    
+    public IssuerService(IssuerRepository issuerRepository) {
+        this.issuerRepository = issuerRepository;
+    }
     
     public List<Issuer> getAllIssuers(Long companyId, String status) {
         if (companyId != null && status != null) {
@@ -33,7 +37,7 @@ public class IssuerService {
     @Transactional
     public Issuer createIssuer(Issuer issuer) {
         if (issuerRepository.findByEmail(issuer.getEmail()).isPresent()) {
-            throw new IllegalArgumentException("Issuer with this email already exists");
+            throw new ResourceAlreadyExistsException("Issuer with this email already exists");
         }
         return issuerRepository.save(issuer);
     }
@@ -41,11 +45,11 @@ public class IssuerService {
     @Transactional
     public Issuer updateIssuer(Long id, Issuer issuerDetails) {
         Issuer issuer = issuerRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Issuer not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Issuer not found"));
         
         if (issuerDetails.getEmail() != null && !issuerDetails.getEmail().equals(issuer.getEmail())) {
             if (issuerRepository.findByEmail(issuerDetails.getEmail()).isPresent()) {
-                throw new IllegalArgumentException("Issuer with this email already exists");
+                throw new ResourceAlreadyExistsException("Issuer with this email already exists");
             }
             issuer.setEmail(issuerDetails.getEmail());
         }
@@ -72,7 +76,7 @@ public class IssuerService {
     @Transactional
     public void deleteIssuer(Long id) {
         if (!issuerRepository.existsById(id)) {
-            throw new IllegalArgumentException("Issuer not found");
+            throw new ResourceNotFoundException("Issuer not found");
         }
         issuerRepository.deleteById(id);
     }

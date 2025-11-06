@@ -13,9 +13,9 @@ This guide provides instructions for deploying the Invoice Management System mic
 ## Local Development
 
 ### Prerequisites
-- Python 3.11+
-- pip
-- virtualenv
+- Java 21
+- Gradle 8.5+ (included via wrapper)
+- Docker (optional, for containerized deployment)
 
 ### Setup Each Service Individually
 
@@ -25,15 +25,14 @@ For each service (invoice-service, company-service, issuer-service, seller-servi
 # Navigate to service directory
 cd services/invoice-service
 
-# Create and activate virtual environment
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-
-# Install dependencies
-pip install -r requirements.txt
+# Build the service
+./gradlew clean build
 
 # Run the service
-python run.py
+./gradlew bootRun
+
+# Or run the JAR directly
+java -jar build/libs/invoice-service-1.0.0.jar
 ```
 
 ### Service Ports

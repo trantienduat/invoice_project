@@ -1,9 +1,10 @@
 package com.invoice.controller;
 
+import com.invoice.exception.ResourceAlreadyExistsException;
+import com.invoice.exception.ResourceNotFoundException;
 import com.invoice.model.Company;
 import com.invoice.service.CompanyService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,8 +17,11 @@ import java.util.Map;
 @RequestMapping("/api/companies")
 public class CompanyController {
     
-    @Autowired
-    private CompanyService companyService;
+    private final CompanyService companyService;
+    
+    public CompanyController(CompanyService companyService) {
+        this.companyService = companyService;
+    }
     
     @GetMapping
     public ResponseEntity<List<Company>> getAllCompanies(
@@ -39,7 +43,7 @@ public class CompanyController {
         try {
             Company createdCompany = companyService.createCompany(company);
             return ResponseEntity.status(HttpStatus.CREATED).body(createdCompany);
-        } catch (IllegalArgumentException e) {
+        } catch (ResourceAlreadyExistsException e) {
             Map<String, String> error = new HashMap<>();
             error.put("error", e.getMessage());
             return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
@@ -51,7 +55,11 @@ public class CompanyController {
         try {
             Company updatedCompany = companyService.updateCompany(id, companyDetails);
             return ResponseEntity.ok(updatedCompany);
-        } catch (IllegalArgumentException e) {
+        } catch (ResourceNotFoundException e) {
+            Map<String, String> error = new HashMap<>();
+            error.put("error", e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+        } catch (ResourceAlreadyExistsException e) {
             Map<String, String> error = new HashMap<>();
             error.put("error", e.getMessage());
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
@@ -65,7 +73,11 @@ public class CompanyController {
             Map<String, String> response = new HashMap<>();
             response.put("message", "Company deleted successfully");
             return ResponseEntity.ok(response);
-        } catch (IllegalArgumentException e) {
+        } catch (ResourceNotFoundException e) {
+            Map<String, String> error = new HashMap<>();
+            error.put("error", e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+        } catch (ResourceAlreadyExistsException e) {
             Map<String, String> error = new HashMap<>();
             error.put("error", e.getMessage());
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);

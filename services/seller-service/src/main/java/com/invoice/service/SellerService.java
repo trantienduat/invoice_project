@@ -1,8 +1,9 @@
 package com.invoice.service;
 
+import com.invoice.exception.ResourceAlreadyExistsException;
+import com.invoice.exception.ResourceNotFoundException;
 import com.invoice.model.Seller;
 import com.invoice.repository.SellerRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,8 +13,11 @@ import java.util.Optional;
 @Service
 public class SellerService {
     
-    @Autowired
-    private SellerRepository sellerRepository;
+    private final SellerRepository sellerRepository;
+    
+    public SellerService(SellerRepository sellerRepository) {
+        this.sellerRepository = sellerRepository;
+    }
     
     public List<Seller> getAllSellers(Long companyId, String status, String territory) {
         if (companyId != null) {
@@ -33,7 +37,7 @@ public class SellerService {
     @Transactional
     public Seller createSeller(Seller seller) {
         if (sellerRepository.findByEmail(seller.getEmail()).isPresent()) {
-            throw new IllegalArgumentException("Seller with this email already exists");
+            throw new ResourceAlreadyExistsException("Seller with this email already exists");
         }
         return sellerRepository.save(seller);
     }
@@ -41,11 +45,11 @@ public class SellerService {
     @Transactional
     public Seller updateSeller(Long id, Seller sellerDetails) {
         Seller seller = sellerRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Seller not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Seller not found"));
         
         if (sellerDetails.getEmail() != null && !sellerDetails.getEmail().equals(seller.getEmail())) {
             if (sellerRepository.findByEmail(sellerDetails.getEmail()).isPresent()) {
-                throw new IllegalArgumentException("Seller with this email already exists");
+                throw new ResourceAlreadyExistsException("Seller with this email already exists");
             }
             seller.setEmail(sellerDetails.getEmail());
         }
@@ -72,7 +76,7 @@ public class SellerService {
     @Transactional
     public void deleteSeller(Long id) {
         if (!sellerRepository.existsById(id)) {
-            throw new IllegalArgumentException("Seller not found");
+            throw new ResourceNotFoundException("Seller not found");
         }
         sellerRepository.deleteById(id);
     }

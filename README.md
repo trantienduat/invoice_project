@@ -261,7 +261,7 @@ curl -X POST http://localhost:5001/api/invoices/ \
 
 ## Technology Stack
 
-- **Language**: Java 21 (LTS)
+- **Language**: Java 21
 - **Backend Framework**: Spring Boot 3.2.0
 - **Database ORM**: Spring Data JPA / Hibernate
 - **Database**: H2 (development) - can be replaced with PostgreSQL/MySQL for production
@@ -273,7 +273,7 @@ curl -X POST http://localhost:5001/api/invoices/ \
 
 For production deployment, consider:
 
-1. **Database**: Replace SQLite with PostgreSQL or MySQL
+1. **Database**: Replace H2 with PostgreSQL or MySQL
 2. **Authentication**: Add JWT or OAuth2 authentication
 3. **API Gateway**: Use Kong, Ambassador, or AWS API Gateway
 4. **Service Discovery**: Implement Consul or Eureka
