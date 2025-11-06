@@ -61,7 +61,8 @@ invoice_project/
 ## Prerequisites
 
 - Docker and Docker Compose
-- Python 3.11+ (for local development)
+- Java 21 (for local development)
+- Maven 3.8+ (for local development)
 
 ## Quick Start with Docker Compose
 
@@ -91,20 +92,19 @@ docker-compose up --build
 cd services/invoice-service
 ```
 
-2. **Create virtual environment**
+2. **Build the service**
 ```bash
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+mvn clean package
 ```
 
-3. **Install dependencies**
+3. **Run the service**
 ```bash
-pip install -r requirements.txt
+java -jar target/invoice-service-1.0.0.jar
 ```
 
-4. **Run the service**
+Or use Maven Spring Boot plugin:
 ```bash
-python run.py
+mvn spring-boot:run
 ```
 
 Repeat for each service using their respective ports.
@@ -261,9 +261,11 @@ curl -X POST http://localhost:5001/api/invoices/ \
 
 ## Technology Stack
 
-- **Backend Framework**: Flask 2.3.3
-- **Database ORM**: SQLAlchemy 3.0.5
-- **Database**: SQLite (development) - can be replaced with PostgreSQL/MySQL for production
+- **Language**: Java 21 (LTS)
+- **Backend Framework**: Spring Boot 3.2.0
+- **Database ORM**: Spring Data JPA / Hibernate
+- **Database**: H2 (development) - can be replaced with PostgreSQL/MySQL for production
+- **Build Tool**: Maven
 - **Containerization**: Docker
 - **Orchestration**: Docker Compose
 

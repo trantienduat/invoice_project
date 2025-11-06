@@ -6,10 +6,10 @@ services:
     ports:
       - "5001:5001"
     environment:
-      - PORT=5001
-      - DATABASE_URL=sqlite:///invoice.db
-    volumes:
-      - ./services/invoice-service:/app
+      - SERVER_PORT=5001
+      - DATABASE_URL=jdbc:h2:file:./data/invoice
+      - DATABASE_DRIVER=org.h2.Driver
+      - HIBERNATE_DIALECT=org.hibernate.dialect.H2Dialect
     networks:
       - invoice-network
     restart: unless-stopped
@@ -19,10 +19,10 @@ services:
     ports:
       - "5002:5002"
     environment:
-      - PORT=5002
-      - DATABASE_URL=sqlite:///company.db
-    volumes:
-      - ./services/company-service:/app
+      - SERVER_PORT=5002
+      - DATABASE_URL=jdbc:h2:file:./data/company
+      - DATABASE_DRIVER=org.h2.Driver
+      - HIBERNATE_DIALECT=org.hibernate.dialect.H2Dialect
     networks:
       - invoice-network
     restart: unless-stopped
@@ -32,10 +32,10 @@ services:
     ports:
       - "5003:5003"
     environment:
-      - PORT=5003
-      - DATABASE_URL=sqlite:///issuer.db
-    volumes:
-      - ./services/issuer-service:/app
+      - SERVER_PORT=5003
+      - DATABASE_URL=jdbc:h2:file:./data/issuer
+      - DATABASE_DRIVER=org.h2.Driver
+      - HIBERNATE_DIALECT=org.hibernate.dialect.H2Dialect
     networks:
       - invoice-network
     restart: unless-stopped
@@ -45,10 +45,10 @@ services:
     ports:
       - "5004:5004"
     environment:
-      - PORT=5004
-      - DATABASE_URL=sqlite:///seller.db
-    volumes:
-      - ./services/seller-service:/app
+      - SERVER_PORT=5004
+      - DATABASE_URL=jdbc:h2:file:./data/seller
+      - DATABASE_DRIVER=org.h2.Driver
+      - HIBERNATE_DIALECT=org.hibernate.dialect.H2Dialect
     networks:
       - invoice-network
     restart: unless-stopped
