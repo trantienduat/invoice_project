@@ -1,0 +1,58 @@
+version: '3.8'
+
+services:
+  invoice-service:
+    build: ./services/invoice-service
+    ports:
+      - "5001:5001"
+    environment:
+      - PORT=5001
+      - DATABASE_URL=sqlite:///invoice.db
+    volumes:
+      - ./services/invoice-service:/app
+    networks:
+      - invoice-network
+    restart: unless-stopped
+
+  company-service:
+    build: ./services/company-service
+    ports:
+      - "5002:5002"
+    environment:
+      - PORT=5002
+      - DATABASE_URL=sqlite:///company.db
+    volumes:
+      - ./services/company-service:/app
+    networks:
+      - invoice-network
+    restart: unless-stopped
+
+  issuer-service:
+    build: ./services/issuer-service
+    ports:
+      - "5003:5003"
+    environment:
+      - PORT=5003
+      - DATABASE_URL=sqlite:///issuer.db
+    volumes:
+      - ./services/issuer-service:/app
+    networks:
+      - invoice-network
+    restart: unless-stopped
+
+  seller-service:
+    build: ./services/seller-service
+    ports:
+      - "5004:5004"
+    environment:
+      - PORT=5004
+      - DATABASE_URL=sqlite:///seller.db
+    volumes:
+      - ./services/seller-service:/app
+    networks:
+      - invoice-network
+    restart: unless-stopped
+
+networks:
+  invoice-network:
+    driver: bridge
