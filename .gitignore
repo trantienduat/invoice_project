@@ -55,3 +55,4 @@ logs/
 
 # Docker
 docker-compose.override.yml
+test_services.sh
