@@ -62,7 +62,7 @@ invoice_project/
 
 - Docker and Docker Compose
 - Java 21 (for local development)
-- Maven 3.8+ (for local development)
+- Gradle 8.5+ (for local development, included via wrapper)
 
 ## Quick Start with Docker Compose
 
@@ -94,17 +94,17 @@ cd services/invoice-service
 
 2. **Build the service**
 ```bash
-mvn clean package
+./gradlew clean build
 ```
 
 3. **Run the service**
 ```bash
-java -jar target/invoice-service-1.0.0.jar
+java -jar build/libs/invoice-service-1.0.0.jar
 ```
 
-Or use Maven Spring Boot plugin:
+Or use Gradle Spring Boot plugin:
 ```bash
-mvn spring-boot:run
+./gradlew bootRun
 ```
 
 Repeat for each service using their respective ports.
@@ -265,7 +265,7 @@ curl -X POST http://localhost:5001/api/invoices/ \
 - **Backend Framework**: Spring Boot 3.2.0
 - **Database ORM**: Spring Data JPA / Hibernate
 - **Database**: H2 (development) - can be replaced with PostgreSQL/MySQL for production
-- **Build Tool**: Maven
+- **Build Tool**: Gradle
 - **Containerization**: Docker
 - **Orchestration**: Docker Compose
 
