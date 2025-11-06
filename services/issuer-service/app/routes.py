@@ -69,6 +69,13 @@ def update_issuer(issuer_id):
     if not data:
         return jsonify({'error': 'No data provided'}), 400
     
+    # Check if email is being updated and if it's unique
+    if 'email' in data and data['email'] != issuer.email:
+        existing = Issuer.query.filter_by(email=data['email']).first()
+        if existing:
+            return jsonify({'error': 'Issuer with this email already exists'}), 409
+        issuer.email = data['email']
+    
     # Update fields if provided
     if 'name' in data:
         issuer.name = data['name']

@@ -72,6 +72,13 @@ def update_seller(seller_id):
     if not data:
         return jsonify({'error': 'No data provided'}), 400
     
+    # Check if email is being updated and if it's unique
+    if 'email' in data and data['email'] != seller.email:
+        existing = Seller.query.filter_by(email=data['email']).first()
+        if existing:
+            return jsonify({'error': 'Seller with this email already exists'}), 409
+        seller.email = data['email']
+    
     # Update fields if provided
     if 'name' in data:
         seller.name = data['name']
