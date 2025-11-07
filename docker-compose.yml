@@ -1,0 +1,58 @@
+version: '3.8'
+
+services:
+  invoice-service:
+    build: ./services/invoice-service
+    ports:
+      - "5001:5001"
+    environment:
+      - SERVER_PORT=5001
+      - DATABASE_URL=jdbc:h2:file:./data/invoice
+      - DATABASE_DRIVER=org.h2.Driver
+      - HIBERNATE_DIALECT=org.hibernate.dialect.H2Dialect
+    networks:
+      - invoice-network
+    restart: unless-stopped
+
+  company-service:
+    build: ./services/company-service
+    ports:
+      - "5002:5002"
+    environment:
+      - SERVER_PORT=5002
+      - DATABASE_URL=jdbc:h2:file:./data/company
+      - DATABASE_DRIVER=org.h2.Driver
+      - HIBERNATE_DIALECT=org.hibernate.dialect.H2Dialect
+    networks:
+      - invoice-network
+    restart: unless-stopped
+
+  issuer-service:
+    build: ./services/issuer-service
+    ports:
+      - "5003:5003"
+    environment:
+      - SERVER_PORT=5003
+      - DATABASE_URL=jdbc:h2:file:./data/issuer
+      - DATABASE_DRIVER=org.h2.Driver
+      - HIBERNATE_DIALECT=org.hibernate.dialect.H2Dialect
+    networks:
+      - invoice-network
+    restart: unless-stopped
+
+  seller-service:
+    build: ./services/seller-service
+    ports:
+      - "5004:5004"
+    environment:
+      - SERVER_PORT=5004
+      - DATABASE_URL=jdbc:h2:file:./data/seller
+      - DATABASE_DRIVER=org.h2.Driver
+      - HIBERNATE_DIALECT=org.hibernate.dialect.H2Dialect
+    networks:
+      - invoice-network
+    restart: unless-stopped
+
+networks:
+  invoice-network:
+    driver: bridge
