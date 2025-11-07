@@ -23,37 +23,43 @@ Each microservice:
 invoice_project/
 ├── services/
 │   ├── invoice-service/
-│   │   ├── app/
-│   │   │   ├── __init__.py
-│   │   │   ├── models.py
-│   │   │   └── routes.py
+│   │   ├── src/
+│   │   │   └── main/
+│   │   │       └── java/
+│   │   │           └── com/invoice/
+│   │   │               ├── InvoiceServiceApplication.java
+│   │   │               ├── controller/
+│   │   │               ├── model/
+│   │   │               ├── repository/
+│   │   │               ├── service/
+│   │   │               └── exception/
+│   │   ├── build.gradle
 │   │   ├── Dockerfile
-│   │   ├── requirements.txt
-│   │   └── run.py
+│   │   └── gradlew
 │   ├── company-service/
-│   │   ├── app/
-│   │   │   ├── __init__.py
-│   │   │   ├── models.py
-│   │   │   └── routes.py
+│   │   ├── src/
+│   │   │   └── main/
+│   │   │       └── java/
+│   │   │           └── com/invoice/
+│   │   ├── build.gradle
 │   │   ├── Dockerfile
-│   │   ├── requirements.txt
-│   │   └── run.py
+│   │   └── gradlew
 │   ├── issuer-service/
-│   │   ├── app/
-│   │   │   ├── __init__.py
-│   │   │   ├── models.py
-│   │   │   └── routes.py
+│   │   ├── src/
+│   │   │   └── main/
+│   │   │       └── java/
+│   │   │           └── com/invoice/
+│   │   ├── build.gradle
 │   │   ├── Dockerfile
-│   │   ├── requirements.txt
-│   │   └── run.py
+│   │   └── gradlew
 │   └── seller-service/
-│       ├── app/
-│       │   ├── __init__.py
-│       │   ├── models.py
-│       │   └── routes.py
+│       ├── src/
+│       │   └── main/
+│       │       └── java/
+│       │           └── com/invoice/
+│       ├── build.gradle
 │       ├── Dockerfile
-│       ├── requirements.txt
-│       └── run.py
+│       └── gradlew
 ├── docker-compose.yml
 └── README.md
 ```

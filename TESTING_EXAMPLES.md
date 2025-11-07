@@ -535,64 +535,60 @@ chmod +x test_all_services.sh
 
 ---
 
-## Using Python for Testing
+## Using Java for Testing
 
-Create a file `test_services.py`:
+The project uses Spring Boot Test framework. Each service has unit and integration tests.
 
-```python
-import requests
-import json
+### Running Tests
 
-BASE_URLS = {
-    'invoice': 'http://localhost:5001/api/invoices',
-    'company': 'http://localhost:5002/api/companies',
-    'issuer': 'http://localhost:5003/api/issuers',
-    'seller': 'http://localhost:5004/api/sellers'
-}
+```bash
+# Run all tests for a service
+cd services/invoice-service
+./gradlew test
 
-def test_health_checks():
-    print("Testing Health Checks...")
-    for service, url in BASE_URLS.items():
-        try:
-            response = requests.get(f"{url}/health")
-            if response.status_code == 200:
-                print(f"✓ {service} service is healthy")
-            else:
-                print(f"✗ {service} service returned {response.status_code}")
-        except Exception as e:
-            print(f"✗ {service} service error: {e}")
+# Run tests with detailed output
+./gradlew test --info
 
-def test_create_company():
-    print("\nTesting Company Creation...")
-    company_data = {
-        "name": "Test Company",
-        "tax_id": f"TEST-{hash('test')}",
-        "country": "USA"
-    }
-    
-    response = requests.post(
-        f"{BASE_URLS['company']}/",
-        json=company_data,
-        headers={'Content-Type': 'application/json'}
-    )
-    
-    if response.status_code == 201:
-        print("✓ Company created successfully")
-        return response.json()['id']
-    else:
-        print(f"✗ Failed to create company: {response.text}")
-        return None
-
-if __name__ == "__main__":
-    test_health_checks()
-    company_id = test_create_company()
-    print(f"\nCreated company with ID: {company_id}")
+# Run specific test class
+./gradlew test --tests InvoiceControllerTest
 ```
 
-Run with:
-```bash
-pip install requests
-python test_services.py
+### Example Test Class
+
+```java
+@SpringBootTest
+@AutoConfigureMockMvc
+class InvoiceControllerTest {
+    
+    @Autowired
+    private MockMvc mockMvc;
+    
+    @Test
+    void testHealthCheck() throws Exception {
+        mockMvc.perform(get("/api/invoices/health"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.status").value("healthy"));
+    }
+    
+    @Test
+    void testCreateInvoice() throws Exception {
+        String invoiceJson = """
+            {
+                "invoice_number": "INV-TEST-001",
+                "company_id": 1,
+                "issuer_id": 1,
+                "seller_id": 1,
+                "amount": 1000.00
+            }
+            """;
+        
+        mockMvc.perform(post("/api/invoices/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(invoiceJson))
+            .andExpect(status().isCreated())
+            .andExpect(jsonPath("$.invoice_number").value("INV-TEST-001"));
+    }
+}
 ```
 
 ---
