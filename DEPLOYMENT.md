@@ -122,8 +122,9 @@ docker push <account-id>.dkr.ecr.us-east-1.amazonaws.com/invoice-service:latest
 3. **Deploy with AWS ECS Service** with load balancer
 
 **Using AWS Lambda + API Gateway:**
-- Use Zappa or Serverless Framework
-- Package each Flask app as a Lambda function
+- Use AWS SAM (Serverless Application Model)
+- Package each Spring Boot app as a Lambda function using AWS Lambda Java Runtime
+- Or use Spring Cloud Function for AWS Lambda integration
 
 #### Google Cloud Platform
 
@@ -209,7 +210,7 @@ kubectl apply -f seller-service-deployment.yaml
 
 ### Production Database Setup
 
-Replace SQLite with PostgreSQL or MySQL:
+Replace H2 with PostgreSQL or MySQL:
 
 **Docker Compose with PostgreSQL:**
 
@@ -229,7 +230,10 @@ services:
   invoice-service:
     build: ./services/invoice-service
     environment:
-      - DATABASE_URL=postgresql://invoiceuser:invoicepass@postgres:5432/invoice_db
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/invoice_db
+      - SPRING_DATASOURCE_USERNAME=invoiceuser
+      - SPRING_DATASOURCE_PASSWORD=invoicepass
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
     depends_on:
       - postgres
 
@@ -243,23 +247,30 @@ Create `.env` file for production:
 
 ```env
 # Invoice Service
-INVOICE_DB_URL=postgresql://user:pass@host:5432/invoice_db
-INVOICE_PORT=5001
+INVOICE_SPRING_DATASOURCE_URL=jdbc:postgresql://host:5432/invoice_db
+INVOICE_SPRING_DATASOURCE_USERNAME=user
+INVOICE_SPRING_DATASOURCE_PASSWORD=pass
+INVOICE_SERVER_PORT=5001
 
 # Company Service
-COMPANY_DB_URL=postgresql://user:pass@host:5432/company_db
-COMPANY_PORT=5002
+COMPANY_SPRING_DATASOURCE_URL=jdbc:postgresql://host:5432/company_db
+COMPANY_SPRING_DATASOURCE_USERNAME=user
+COMPANY_SPRING_DATASOURCE_PASSWORD=pass
+COMPANY_SERVER_PORT=5002
 
 # Issuer Service
-ISSUER_DB_URL=postgresql://user:pass@host:5432/issuer_db
-ISSUER_PORT=5003
+ISSUER_SPRING_DATASOURCE_URL=jdbc:postgresql://host:5432/issuer_db
+ISSUER_SPRING_DATASOURCE_USERNAME=user
+ISSUER_SPRING_DATASOURCE_PASSWORD=pass
+ISSUER_SERVER_PORT=5003
 
 # Seller Service
-SELLER_DB_URL=postgresql://user:pass@host:5432/seller_db
-SELLER_PORT=5004
+SELLER_SPRING_DATASOURCE_URL=jdbc:postgresql://host:5432/seller_db
+SELLER_SPRING_DATASOURCE_USERNAME=user
+SELLER_SPRING_DATASOURCE_PASSWORD=pass
+SELLER_SERVER_PORT=5004
 
 # Security
-SECRET_KEY=your-secret-key-here
 JWT_SECRET=your-jwt-secret-here
 
 # API Gateway (if used)
@@ -451,8 +462,11 @@ docker-compose build --no-cache invoice-service
 ### Database Connection Issues
 
 ```bash
-# Test database connection
-python -c "from sqlalchemy import create_engine; engine = create_engine('your-db-url'); print(engine.connect())"
+# Test database connection from within the container using psql
+docker exec -it invoice-service psql -h postgres -U invoiceuser -d invoice_db
+
+# Or check service health via actuator endpoint (if available)
+curl http://localhost:5001/actuator/health
 ```
 
 ### Performance Issues

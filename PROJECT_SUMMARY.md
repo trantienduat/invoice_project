@@ -89,7 +89,7 @@ This project implements a complete microservices-based invoice management system
 - Debug mode controlled by environment variable (disabled by default)
 - Input validation on all endpoints
 - Email uniqueness validation
-- SQL injection prevention via SQLAlchemy ORM
+- SQL injection prevention via JPA/Hibernate ORM
 - Error handling with appropriate status codes
 - No security vulnerabilities (CodeQL verified)
 
@@ -165,41 +165,43 @@ The project includes comprehensive documentation:
 invoice_project/
 ├── services/
 │   ├── invoice-service/
-│   │   ├── app/
-│   │   │   ├── __init__.py
-│   │   │   ├── models.py
-│   │   │   └── routes.py
-│   │   ├── tests/
+│   │   ├── src/
+│   │   │   └── main/
+│   │   │       └── java/
+│   │   │           └── com/invoice/
+│   │   │               ├── InvoiceServiceApplication.java
+│   │   │               ├── controller/
+│   │   │               ├── model/
+│   │   │               ├── repository/
+│   │   │               ├── service/
+│   │   │               └── exception/
+│   │   ├── build.gradle
 │   │   ├── Dockerfile
-│   │   ├── requirements.txt
-│   │   └── run.py
+│   │   └── gradlew
 │   ├── company-service/
-│   │   ├── app/
-│   │   │   ├── __init__.py
-│   │   │   ├── models.py
-│   │   │   └── routes.py
-│   │   ├── tests/
+│   │   ├── src/
+│   │   │   └── main/
+│   │   │       └── java/
+│   │   │           └── com/invoice/
+│   │   ├── build.gradle
 │   │   ├── Dockerfile
-│   │   ├── requirements.txt
-│   │   └── run.py
+│   │   └── gradlew
 │   ├── issuer-service/
-│   │   ├── app/
-│   │   │   ├── __init__.py
-│   │   │   ├── models.py
-│   │   │   └── routes.py
-│   │   ├── tests/
+│   │   ├── src/
+│   │   │   └── main/
+│   │   │       └── java/
+│   │   │           └── com/invoice/
+│   │   ├── build.gradle
 │   │   ├── Dockerfile
-│   │   ├── requirements.txt
-│   │   └── run.py
+│   │   └── gradlew
 │   └── seller-service/
-│       ├── app/
-│       │   ├── __init__.py
-│       │   ├── models.py
-│       │   └── routes.py
-│       ├── tests/
+│       ├── src/
+│       │   └── main/
+│       │       └── java/
+│       │           └── com/invoice/
+│       ├── build.gradle
 │       ├── Dockerfile
-│       ├── requirements.txt
-│       └── run.py
+│       └── gradlew
 ├── .gitignore
 ├── API_DOCUMENTATION.md
 ├── DEPLOYMENT.md
@@ -233,10 +235,8 @@ docker compose up --build
 ```bash
 # For each service:
 cd services/invoice-service
-python -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
-python run.py
+./gradlew clean build
+./gradlew bootRun
 ```
 
 ## Production Considerations
@@ -280,7 +280,7 @@ curl http://localhost:5002/api/companies/
 
 ## Code Quality
 
-- Follows Flask best practices
+- Follows Spring Boot best practices
 - Clean, maintainable code structure
 - Consistent error handling
 - Proper input validation
