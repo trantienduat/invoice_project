@@ -247,32 +247,31 @@ Create `.env` file for production:
 
 ```env
 # Invoice Service
-SPRING_DATASOURCE_URL=jdbc:postgresql://host:5432/invoice_db
-SPRING_DATASOURCE_USERNAME=user
-SPRING_DATASOURCE_PASSWORD=pass
-SERVER_PORT=5001
+INVOICE_SPRING_DATASOURCE_URL=jdbc:postgresql://host:5432/invoice_db
+INVOICE_SPRING_DATASOURCE_USERNAME=user
+INVOICE_SPRING_DATASOURCE_PASSWORD=pass
+INVOICE_SERVER_PORT=5001
 
 # Company Service
-SPRING_DATASOURCE_URL=jdbc:postgresql://host:5432/company_db
-SPRING_DATASOURCE_USERNAME=user
-SPRING_DATASOURCE_PASSWORD=pass
-SERVER_PORT=5002
+COMPANY_SPRING_DATASOURCE_URL=jdbc:postgresql://host:5432/company_db
+COMPANY_SPRING_DATASOURCE_USERNAME=user
+COMPANY_SPRING_DATASOURCE_PASSWORD=pass
+COMPANY_SERVER_PORT=5002
 
 # Issuer Service
-SPRING_DATASOURCE_URL=jdbc:postgresql://host:5432/issuer_db
-SPRING_DATASOURCE_USERNAME=user
-SPRING_DATASOURCE_PASSWORD=pass
-SERVER_PORT=5003
+ISSUER_SPRING_DATASOURCE_URL=jdbc:postgresql://host:5432/issuer_db
+ISSUER_SPRING_DATASOURCE_USERNAME=user
+ISSUER_SPRING_DATASOURCE_PASSWORD=pass
+ISSUER_SERVER_PORT=5003
 
 # Seller Service
-SPRING_DATASOURCE_URL=jdbc:postgresql://host:5432/seller_db
-SPRING_DATASOURCE_USERNAME=user
-SPRING_DATASOURCE_PASSWORD=pass
-SERVER_PORT=5004
+SELLER_SPRING_DATASOURCE_URL=jdbc:postgresql://host:5432/seller_db
+SELLER_SPRING_DATASOURCE_USERNAME=user
+SELLER_SPRING_DATASOURCE_PASSWORD=pass
+SELLER_SERVER_PORT=5004
 
 # Security
 JWT_SECRET=your-jwt-secret-here
-SPRING_SECURITY_KEY=your-security-key-here
 
 # API Gateway (if used)
 API_GATEWAY_URL=https://api.yourcompany.com
@@ -463,11 +462,11 @@ docker-compose build --no-cache invoice-service
 ### Database Connection Issues
 
 ```bash
-# Test database connection from within the container
-docker exec -it invoice-service sh -c "java -cp /app/libs/* org.postgresql.Driver jdbc:postgresql://postgres:5432/invoice_db"
+# Test database connection from within the container using psql
+docker exec -it invoice-service psql -h postgres -U invoiceuser -d invoice_db
 
-# Or use psql client
-psql -h localhost -U invoiceuser -d invoice_db
+# Or check service health via actuator endpoint (if available)
+curl http://localhost:5001/actuator/health
 ```
 
 ### Performance Issues
